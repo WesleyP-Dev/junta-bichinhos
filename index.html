@@ -7,9 +7,10 @@
 <main><small>✦ UMA BRINCADEIRA FOFINHA ✦</small><h1>Junta Bichinhos</h1><section id="game"><p>Toque em dois bichinhos diferentes para chamar mais um!</p><div class="pair" id="pair"><button class="pet" type="button"><span class="face" aria-hidden="true">🐰</span><span>Coelhinho</span></button><button class="pet" type="button"><span class="face" aria-hidden="true">🐱</span><span>Gatinho</span></button></div></section><div id="sum" class="sum" role="status"></div><div id="dots" class="dots" aria-hidden="true"></div><p id="count" aria-live="polite"></p><section id="end" hidden><div class="party" aria-hidden="true">🎉</div><h2 id="reveal" tabindex="-1">Você foi bobo de ter feito isso!</h2><p>Mande para um amigo ser bobo também 😜</p><button class="action" id="share" type="button">Mandar para um amigo</button><button class="action" id="reset" type="button">Reiniciar</button><p id="feedback" role="status"></p></section></main>
 <script>
 const $=id=>document.getElementById(id), pets=[...document.querySelectorAll('.pet')];
-const extras=[['🐶','Cachorrinho'],['🐼','Pandinha'],['🦊','Raposinha']];
+const extras=[['🐶','Cachorrinho'],['🐼','Pandinha'],['🦊','Raposinha'],['🐸','Sapinho'],['🐧','Pinguim'],['🐹','Hamster'],['🐨','Coala'],['🐥','Pintinho']];
+const goal=2+extras.length;
 const picks=new Set(); let busy=false;
-function count(){ $('count').textContent=`${pets.length} de 5 bichinhos`; $('dots').textContent='●'.repeat(pets.length)+'○'.repeat(5-pets.length); }
+function count(){ $('count').textContent=`${pets.length} de ${goal} bichinhos`; $('dots').textContent='●'.repeat(pets.length)+'○'.repeat(goal-pets.length); }
 function addPet(){
  const [emoji,name]=extras[pets.length-2], pet=document.createElement('button');
  pet.type='button';pet.className='pet';
@@ -17,7 +18,7 @@ function addPet(){
  pet.append(face,name);$('pair').append(pet);pets.push(pet);pet.addEventListener('click',()=>pick(pet));
 }
 function pick(pet){
- if(busy || pets.length===5 || picks.has(pet))return;
+ if(busy || pets.length===goal || picks.has(pet))return;
  picks.add(pet);pet.classList.add('picked');pet.setAttribute('aria-pressed','true');
  if(picks.size===1){$('sum').textContent='Agora escolha outro bichinho!';return;}
  busy=true;
@@ -30,11 +31,11 @@ function pick(pet){
  setTimeout(()=>{
   const before=pets.length;addPet();count();$('sum').textContent=`${before} + 1 = ${pets.length}`;
   for(const p of picks){p.classList.remove('picked');p.setAttribute('aria-pressed','false');}picks.clear();busy=false;
-  if(pets.length===5){pets.forEach(p=>p.disabled=true);$('end').hidden=false;$('reveal').focus();}
+  if(pets.length===goal){pets.forEach(p=>p.disabled=true);$('end').hidden=false;$('reveal').focus();}
  },reduced?0:450);
 }
 pets.forEach(p=>p.addEventListener('click',()=>pick(p)));
 $('reset').onclick=()=>{while(pets.length>2)pets.pop().remove();pets.forEach(p=>p.disabled=false);count();$('sum').textContent='';$('feedback').textContent='';$('end').hidden=true;pets[0].focus();};
-$('share').onclick=async()=>{const url=location.href.split(/[?#]/)[0];if(navigator.share){try{await navigator.share({title:'Junta Bichinhos',text:'Consegue chegar a 5? 🐰🐱',url});return;}catch(e){if(e.name==='AbortError')return;}}try{await navigator.clipboard.writeText(url);$('feedback').textContent='Link copiado!';}catch{$('feedback').textContent='Copie este link: '+url;}};
+$('share').onclick=async()=>{const url=location.href.split(/[?#]/)[0];if(navigator.share){try{await navigator.share({title:'Junta Bichinhos',text:'Consegue chegar a 10? 🐰🐱',url});return;}catch(e){if(e.name==='AbortError')return;}}try{await navigator.clipboard.writeText(url);$('feedback').textContent='Link copiado!';}catch{$('feedback').textContent='Copie este link: '+url;}};
 count();
 </script></html>
